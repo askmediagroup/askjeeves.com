@@ -301,6 +301,7 @@
         setStatus(data.error || 'Something went wrong. Please email us directly.', 'error');
       }
     } catch (err) {
+      console.error(err);
       setStatus('Could not send. Please email us directly.', 'error');
     } finally {
       button.disabled = false;
