@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Farewell to Ask.com | 30 Years of Curiosity | Contact US</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfcfc;
+            color: #1a1a1a;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 1.5s ease-in forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.6s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+      .inquiry {
+        padding: 4rem 1.5rem 2rem;
+        background: #fcfcfc;
+        color: #1a1a1a;
+        font-family: Inter, sans-serif;
+        font-weight: 300;
+        -webkit-font-smoothing: antialiased;
+      }
+      .inquiry__inner { max-width: 768px; margin: 0 auto; text-align: left; }
+    
+      .inquiry__logo { width: 96px; height: auto; margin-bottom: 3rem; display: block; }
+    
+      .inquiry__title {
+        font-family: "Playfair Display", serif;
+        font-weight: 600;
+        font-size: clamp(2.25rem, 6vw, 3.75rem);
+        line-height: 1;
+        color: #111827;
+        margin: 0 0 1.5rem;
+      }
+      .inquiry__intro {
+        font-size: 1.25rem;
+        font-weight: 300;
+        line-height: 1.625;
+        color: #4b5563;
+        margin: 0 0 3.5rem;
+        max-width: 42rem;
+      }
+    
+      .inquiry__eyebrow {
+        font-family: "Playfair Display", serif;
+        font-size: 1.875rem;
+        font-weight: 400;
+        line-height: 1.2;
+        color: #111827;
+        margin: 0 0 2rem;
+        padding-top: 2.5rem;
+        border-top: 1px solid #e5e7eb;
+      }
+    
+      .inquiry__row   { margin-bottom: 1.75rem; }
+    
+      .inquiry__row--split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 480px) {
+        .inquiry__row--split { grid-template-columns: 1fr; gap: 1.75rem; }
+      }
+      .inquiry__label {
+        display: block; margin-bottom: .5rem;
+        font-size: .875rem; font-weight: 400; color: #4b5563;
+      }
+      .req { color: #9ca3af; }
+    
+      .inquiry__input {
+        width: 100%;
+        padding: .6rem 0;
+        border: 0;
+        border-bottom: 1px solid #d1d5db;
+        border-radius: 0;
+        font-family: Inter, sans-serif;
+        font-size: 1.0625rem;
+        font-weight: 300;
+        color: #1a1a1a;
+        background: transparent;
+        box-sizing: border-box;
+        transition: border-color .15s ease;
+        appearance: none;
+      }
+      .inquiry__input::placeholder { color: #9ca3af; }
+      .inquiry__input:hover  { border-bottom-color: #9ca3af; }
+      .inquiry__input:focus  { outline: none; border-bottom-color: #111827; }
+      .inquiry__input.is-bad { border-bottom-color: #b91c1c; }
+      textarea.inquiry__input { resize: vertical; line-height: 1.625; }
+    
+      #turnstile-holder:not(:empty) { margin: 1.75rem 0 0; }
+    
+      .inquiry__submit {
+        margin-top: 2.5rem;
+        background: #111827; color: #fcfcfc; border: 0;
+        padding: .9rem 2.25rem; border-radius: 2px;
+        font-family: Inter, sans-serif;
+        font-size: .9375rem; font-weight: 400;
+        cursor: pointer;
+        transition: background .15s ease;
+      }
+      .inquiry__submit:hover:not(:disabled) { background: #1a1a1a; }
+      .inquiry__submit:disabled             { opacity: .4; cursor: not-allowed; }
+    
+      .inquiry__status          { margin: 1.25rem 0 0; font-size: .9375rem; min-height: 1.2em; color: #4b5563; }
+      .inquiry__status.is-ok    { color: #15803d; }
+      .inquiry__status.is-error { color: #b91c1c; }
+    
+      .inquiry__hp {
+        position: absolute; left: -9999px;
+        width: 1px; height: 1px; overflow: hidden;
+      }
+</style>
+
+<script>
+(function () {
+  const ENDPOINT = 'https://script.google.com/a/macros/ask.com/s/AKfycbwQlpG7QbUvpsbtn2CHRFrNaghDmiZVx-haH4CHwu8dxHXsKkeST3AQipA2I51GWSO4/exec';
+
+  // ── Cloudflare Turnstile: OFF until you paste a sitekey here ──
+  // Empty string = disabled, and no Cloudflare script loads at all.
+  // To enable: paste the sitekey, and paste the matching secret in apps-script.gs.
+  // Both must be set. A sitekey with no secret means nothing verifies the token;
+  // a secret with no sitekey rejects every submission.
+  const TURNSTILE_SITEKEY = '';
+  const form   = document.getElementById('inquiry-form');
+  const status = document.getElementById('inquiry-status');
+  const button = form.querySelector('.inquiry__submit');
+
+  // Mount the widget only when enabled. Turnstile auto-renders any .cf-turnstile
+  // element present on load, so class and dataset must be set before the script runs.
+  if (TURNSTILE_SITEKEY) {
+    const holder = document.getElementById('turnstile-holder');
+    holder.className       = 'cf-turnstile';
+    holder.dataset.sitekey = TURNSTILE_SITEKEY;
+    holder.dataset.theme   = 'light';   // 'auto' | 'light' | 'dark'
+
+    const s = document.createElement('script');
+    s.src   = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true;
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+
+  const setStatus = (msg, kind) => {
+    status.textContent = msg;
+    status.className = 'inquiry__status' + (kind ? ' is-' + kind : '');
+  };
+
+  // ── Validators. These MIRROR apps-script.gs — change one, change both. ──
+  // Client-side is for fast feedback only; the endpoint re-runs all of it,
+  // so a direct POST faces the same checks.
+
+  // Structural, not format-based: real numbers vary wildly by country.
+  // Letters out, E.164 digit range in, extensions tolerated.
+  const validPhone = (raw) => {
+    const s = (raw || '').trim();
+    if (!s) return true;                 // optional
+    if (s.length > 32) return false;
+    const core = s.replace(/\s*(?:x|ext\.?|extension|#)\s*\d{1,6}\s*$/i, '').trim();
+    if (!/^\+?[\d\s\-().]+$/.test(core)) return false;
+    const digits = core.replace(/\D/g, '');
+    return digits.length >= 7 && digits.length <= 15;
+  };
+
+  // At least one letter, any script. Passes O'Brien, José, 李 — rejects "####".
+  const validName = (raw) => /\p{L}/u.test((raw || '').trim());
+
+  const validEmail = (raw) => {
+    const s = (raw || '').trim();
+    if (!/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(?:\.[A-Za-z0-9\-]+)*\.[A-Za-z]{2,63}$/.test(s)) return false;
+    if (s.includes('..')) return false;
+    const local = s.split('@')[0];
+    return !local.startsWith('.') && !local.endsWith('.');
+  };
+
+  const fail = (fieldName, msg) => {
+    const el = form.elements[fieldName];
+    el.classList.add('is-bad');
+    el.focus();
+    setStatus(msg, 'error');
+  };
+
+  form.addEventListener('submit', async function (ev) {
+    ev.preventDefault();
+
+    // Client-side validation is UX, not security — the endpoint re-checks.
+    form.querySelectorAll('.is-bad').forEach(el => el.classList.remove('is-bad'));
+
+    const required = ['first_name', 'last_name', 'email', 'message'];
+    const missing  = required.filter(n => !form.elements[n].value.trim());
+
+    if (missing.length) {
+      missing.forEach(n => form.elements[n].classList.add('is-bad'));
+      form.elements[missing[0]].focus();
+      setStatus('Please fill in the required fields.', 'error');
+      return;
+    }
+
+    if (!validName(form.elements.first_name.value)) {
+      return fail('first_name', 'Please enter your first name.');
+    }
+    if (!validName(form.elements.last_name.value)) {
+      return fail('last_name', 'Please enter your last name.');
+    }
+    if (!validEmail(form.elements.email.value)) {
+      return fail('email', 'Please enter a valid email address.');
+    }
+    if (!validPhone(form.elements.phone.value)) {
+      return fail('phone', 'Please enter a valid phone number, or leave it blank.');
+    }
+    // Mirrors MIN_MESSAGE_LEN in apps-script.gs. Keep the two in sync.
+    if (form.elements.message.value.trim().length < 20) {
+      return fail('message', 'Please tell us a little more about your inquiry.');
+    }
+
+    // Turnstile normally resolves before a human finishes typing, so this rarely
+    // fires. When it does, it means the challenge is still running.
+    if (TURNSTILE_SITEKEY) {
+      const el = form.elements['cf-turnstile-response'];
+      if (!el || !el.value) {
+        setStatus('Just a moment — still verifying. Try again in a second.', 'error');
+        return;
+      }
+    }
+
+    button.disabled = true;
+    setStatus('Sending…');
+
+    try {
+      // URLSearchParams keeps this a "simple" CORS request — no preflight,
+      // which Apps Script cannot answer. Do not switch this to JSON.
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        body: new URLSearchParams(new FormData(form))
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        form.reset();
+        setStatus('Thank you — your inquiry is in. We’ll be in touch within one business day.', 'ok');
+      } else {
+        setStatus(data.error || 'Something went wrong. Please email us directly.', 'error');
+      }
+    } catch (err) {
+      setStatus('Could not send. Please email us directly.', 'error');
+    } finally {
+      button.disabled = false;
+
+      // Turnstile tokens are single-use. Without this reset, a second submission
+      // in the same page view replays a spent token and gets rejected — which
+      // looks exactly like a broken form. Runs on success and failure alike.
+      if (TURNSTILE_SITEKEY && window.turnstile) {
+        window.turnstile.reset();
+      }
+    }
+  });
+})();
+</script>
+</head>
+<body class="min-h-screen flex flex-col bg-[#fcfcfc]">
+<section class="inquiry">
+  <div class="inquiry__inner">
+
+    <!-- LOGO SLOT — 96px wide on the holding page. -->
+    <!-- <img src="/site-logo.svg" alt="" class="inquiry__logo"> -->
+
+    <h2 class="inquiry__title">Every great search<br>finds a new beginning.</h2>
+    <p class="inquiry__intro">
+      Following the closure of the search business on May 1, 2026, the Ask.com domain
+      is available for acquisition. Inquiries are reviewed personally and answered
+      within one business day.
+    </p>
+
+    <p class="inquiry__eyebrow">Register your interest</p>
+
+    <form id="inquiry-form" class="inquiry__form" novalidate>
+
+      <!-- Honeypot. Hidden from humans, irresistible to bots. Do not remove. -->
+      <div class="inquiry__hp" aria-hidden="true">
+        <label for="company_website">Company website</label>
+        <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="inquiry__row inquiry__row--split">
+        <div>
+          <label class="inquiry__label" for="first_name">First name <span class="req">*</span></label>
+          <input class="inquiry__input" type="text" id="first_name" name="first_name" required autocomplete="given-name">
+        </div>
+        <div>
+          <label class="inquiry__label" for="last_name">Last name <span class="req">*</span></label>
+          <input class="inquiry__input" type="text" id="last_name" name="last_name" required autocomplete="family-name">
+        </div>
+      </div>
+
+      <div class="inquiry__row">
+        <label class="inquiry__label" for="email">Email <span class="req">*</span></label>
+        <input class="inquiry__input" type="email" id="email" name="email" required autocomplete="email">
+      </div>
+
+      <div class="inquiry__row">
+        <label class="inquiry__label" for="phone">Phone</label>
+        <input class="inquiry__input" type="tel" id="phone" name="phone" autocomplete="tel">
+      </div>
+
+
+      <div class="inquiry__row">
+        <label class="inquiry__label" for="message">Message <span class="req">*</span></label>
+        <textarea class="inquiry__input" id="message" name="message" rows="5" required></textarea>
+      </div>
+
+      <!-- Turnstile widget mounts here when a sitekey is set. Stays empty otherwise. -->
+      <div id="turnstile-holder"></div>
+
+      <button class="inquiry__submit" type="submit">Send Inquiry</button>
+
+      <p class="inquiry__status" id="inquiry-status" role="status" aria-live="polite"></p>
+    </form>
+
+  </div>
+</section>
+</body>
