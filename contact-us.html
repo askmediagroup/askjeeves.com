@@ -1,40 +1,19 @@
-<!DOCTYPE html><html><head><meta charset="utf-8">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@400;600&display=swap">
-<style>body{margin:0;background:#fcfcfc}</style>
-</head><body><!--
-  IP Inquiry form — drop-in section for a static landing page.
-  Vanilla HTML/CSS/JS. No dependencies, no iframe.
-
-  Typography matches the ask.com holding page:
-    Playfair Display 600 headings / Inter 300 body, #fcfcfc canvas, 768px column.
-
-  BEFORE USE:
-    1. Replace ENDPOINT below with your Apps Script /exec URL (see SETUP.md).
-    2. Put this in your page <head> — without it the fonts silently fall back
-       and the whole thing looks wrong:
-
-       <link rel="preconnect" href="https://fonts.googleapis.com">
-       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@400;600&display=swap">
-
-       If your landing page already loads these (it will, if it's built from the
-       holding page), skip it — don't load them twice.
-    3. Uncomment the logo slot and point it at your file.
--->
-
-<section class="inquiry">
-  <div class="inquiry__inner">
-
-    <!-- LOGO SLOT — 96px wide on the holding page. -->
-    <!-- <img src="/site-logo.svg" alt="" class="inquiry__logo"> -->
-
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@400;600&display=swap">
+    <style>body{margin:0;background:#fcfcfc}</style>
+  </head>
+  <body>
+    <section class="inquiry">
+      <div class="inquiry__inner">
+        <img src="/site-logo.svg" alt="" class="inquiry__logo" />
     <h2 class="inquiry__title">Every great search<br>finds a new beginning.</h2>
     <p class="inquiry__intro">
-      Following the closure of the search business on May 1, 2026, the Ask.com domain
-      is available for acquisition. Inquiries are reviewed personally and answered
-      within one business day.
+      Send Us a Message
     </p>
 
     <p class="inquiry__eyebrow">Register your interest</p>
@@ -43,7 +22,7 @@
 
       <!-- Honeypot. Hidden from humans, irresistible to bots. Do not remove. -->
       <div class="inquiry__hp" aria-hidden="true">
-        <label for="company_website">Company website</label>
+        <label for="company_website">Ask.com</label>
         <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off">
       </div>
 
@@ -74,7 +53,6 @@
         <textarea class="inquiry__input" id="message" name="message" rows="5" required></textarea>
       </div>
 
-      <!-- Turnstile widget mounts here when a sitekey is set. Stays empty otherwise. -->
       <div id="turnstile-holder"></div>
 
       <button class="inquiry__submit" type="submit">Send Inquiry</button>
@@ -84,8 +62,6 @@
 
   </div>
 </section>
-
-
 <style>
   /* Tokens lifted from the ask.com holding page:
        canvas #fcfcfc · body #1a1a1a · Inter 300 · Playfair Display 600
@@ -196,7 +172,6 @@
     width: 1px; height: 1px; overflow: hidden;
   }
 </style>
-
 
 <script>
 (function () {
@@ -343,5 +318,6 @@
     }
   });
 })();
-</script>
-</body></html>
+    </script>
+  </body>
+</html>
