@@ -171,12 +171,10 @@
 
 <script>
 (function () {
-  // ── Replace with your Apps Script Web App /exec URL ──
   const ENDPOINT = 'https://script.google.com/a/macros/ask.com/s/AKfycbwQlpG7QbUvpsbtn2CHRFrNaghDmiZVx-haH4CHwu8dxHXsKkeST3AQipA2I51GWSO4/exec';
 
   // ── Cloudflare Turnstile: OFF until you paste a sitekey here ──
   // Empty string = disabled, and no Cloudflare script loads at all.
-  // To enable: paste the sitekey, and paste the matching secret in apps-script.gs.
   // Both must be set. A sitekey with no secret means nothing verifies the token;
   // a secret with no sitekey rejects every submission.
   const TURNSTILE_SITEKEY = '';
@@ -205,7 +203,6 @@
     status.className = 'inquiry__status' + (kind ? ' is-' + kind : '');
   };
 
-  // ── Validators. These MIRROR apps-script.gs — change one, change both. ──
   // Client-side is for fast feedback only; the endpoint re-runs all of it,
   // so a direct POST faces the same checks.
 
@@ -267,7 +264,6 @@
     if (!validPhone(form.elements.phone.value)) {
       return fail('phone', 'Please enter a valid phone number, or leave it blank.');
     }
-    // Mirrors MIN_MESSAGE_LEN in apps-script.gs. Keep the two in sync.
     if (form.elements.message.value.trim().length < 20) {
       return fail('message', 'Please tell us a little more about your inquiry.');
     }
@@ -287,7 +283,6 @@
 
     try {
       // URLSearchParams keeps this a "simple" CORS request — no preflight,
-      // which Apps Script cannot answer. Do not switch this to JSON.
       const res = await fetch(ENDPOINT, {
         method: 'POST',
         body: new URLSearchParams(new FormData(form))
